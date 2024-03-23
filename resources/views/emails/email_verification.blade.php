@@ -1,8 +1,8 @@
 <x-mail::message>
-# Reset Password
+# Email Verification
 
 <x-mail::button :url="$url">
-    Reset Password
+    Email Verification
 </x-mail::button>
 
 Thanks,<br>

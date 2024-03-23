@@ -8,8 +8,9 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\URL;
 
-class ResetPasswordLink extends Mailable
+class EmailVerification extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -18,9 +19,11 @@ class ResetPasswordLink extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct($url)
+    public function __construct($user)
     {
-        $this->url = $url;
+        $url_generate = URL::temporarySignedRoute('verify.email', now()->addMinute(30), ['email' => $user->email]);
+        $this->url = str_replace(env('APP_URL'), env('FRONTEND_URL'), $url_generate);
+        //dd($this->url);
     }
 
     /**
@@ -29,7 +32,7 @@ class ResetPasswordLink extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reset Password Link',
+            subject: 'Email Verification',
         );
     }
 
@@ -39,7 +42,7 @@ class ResetPasswordLink extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.reset_password_link',
+            markdown: 'emails.email_verification',
         );
     }
 
